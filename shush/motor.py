@@ -50,7 +50,7 @@ class Motor(Board):
     def default_settings(self):
         self.write(reg.GCONF, 0x0000000C)
         self.write(reg.CHOPCONF, 0x000100C3)
-        self.write(reg.IHOLD_IRUN, 0x00080F02)
+        self.write(reg.IHOLD_IRUN, 0x00080501)
         self.write(reg.TPOWERDOWN, 0x0000000A)
         self.write(reg.TPWMTHRS, 0x000001F4)
 
