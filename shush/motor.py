@@ -1,36 +1,26 @@
-from shush.board import Board, s1
+from shush.board import Board
 from shush.drivers import tmc5160_reg as reg
 from gpiozero import DigitalOutputDevice
 from shush.params import Ramp as ramp
 import time
+import shush.boards.planktoscope_hat_v1 as s1
 
 
 class Motor(Board):
     def __init__(self, motor: int):
         super().__init__()
 
-        # Create pin maps
-        cs_map = {
-            0: s1.m0_cs,
-            1: s1.m1_cs,
-            2: s1.m2_cs,
-            3: s1.m3_cs,
-            4: s1.m4_cs,
-            5: s1.m5_cs,
-        }
+        # Build pin names dynamically
+        cs_attr = f"m{motor}_cs"
+        en_attr = f"m{motor}_enable"
 
-        en_map = {
-            0: s1.m0_enable,
-            1: s1.m1_enable,
-            2: s1.m2_enable,
-            3: s1.m3_enable,
-            4: s1.m4_enable,
-            5: s1.m5_enable,
-        }
+        # Check if pins exist
+        if not hasattr(s1, cs_attr) or not hasattr(s1, en_attr):
+            raise ValueError(f"Motor {motor} is not supported by this board configuration.")
 
         # Set up CS and Enable pins as DigitalOutputDevice
-        self.chip_select = DigitalOutputDevice(cs_map[motor], initial_value=True)
-        self.enable = DigitalOutputDevice(en_map[motor], initial_value=True)
+        self.chip_select = DigitalOutputDevice(getattr(s1, cs_attr), initial_value=True)
+        self.enable = DigitalOutputDevice(getattr(s1, en_attr), initial_value=True)
 
         self.motor = motor
         self.default_settings()
@@ -42,9 +32,9 @@ class Motor(Board):
         self.enable.on()   # HIGH to disable
 
     def send_data(self, data_array: list) -> int:
-        self.chip_select.off()  # CS LOW
+        self.chip_select.off()
         response = Board.spi.xfer2(data_array)
-        self.chip_select.on()   # CS HIGH
+        self.chip_select.on()
         return response
 
     def default_settings(self):
