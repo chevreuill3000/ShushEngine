@@ -1,11 +1,8 @@
 __author__ = 'ZJAllen'
 
 import shush.boards.shush_mk1 as s1
-
-import spidev as spidev
-import RPi.GPIO as gpio
-
-gpio.setwarnings(False)
+import spidev
+from gpiozero import DigitalOutputDevice
 
 
 class Board:
@@ -16,38 +13,28 @@ class Board:
         self.init_gpio_state()
 
     def init_gpio_state(self):
-        # Sets the default states for the GPIO on the Shush modules.
-        # Only applies to Raspberry Pi
+        # Initialize CS pins
+        self.cs_pins = {
+            'm0': DigitalOutputDevice(s1.m0_cs, initial_value=True),
+            'm1': DigitalOutputDevice(s1.m1_cs, initial_value=True),
+            'm2': DigitalOutputDevice(s1.m2_cs, initial_value=True),
+            'm3': DigitalOutputDevice(s1.m3_cs, initial_value=True),
+            'm4': DigitalOutputDevice(s1.m4_cs, initial_value=True),
+            'm5': DigitalOutputDevice(s1.m5_cs, initial_value=True),
+        }
 
-        gpio.setmode(gpio.BCM)
-
-        # Define chip select pins
-        gpio.setup(s1.m0_cs, gpio.OUT)
-        gpio.setup(s1.m1_cs, gpio.OUT)
-        gpio.setup(s1.m2_cs, gpio.OUT)
-        gpio.setup(s1.m3_cs, gpio.OUT)
-        gpio.setup(s1.m4_cs, gpio.OUT)
-        gpio.setup(s1.m5_cs, gpio.OUT)
-
-        # Define enable pins
-        gpio.setup(s1.m0_enable, gpio.OUT)
-        gpio.setup(s1.m1_enable, gpio.OUT)
-        gpio.setup(s1.m2_enable, gpio.OUT)
-        gpio.setup(s1.m3_enable, gpio.OUT)
-        gpio.setup(s1.m4_enable, gpio.OUT)
-        gpio.setup(s1.m5_enable, gpio.OUT)
-
-        # Pull all cs pins HIGH (LOW initializes data transmission)
-        gpio.output(s1.m0_cs, gpio.HIGH)
-        gpio.output(s1.m1_cs, gpio.HIGH)
-        gpio.output(s1.m2_cs, gpio.HIGH)
-        gpio.output(s1.m3_cs, gpio.HIGH)
-        gpio.output(s1.m4_cs, gpio.HIGH)
-        gpio.output(s1.m5_cs, gpio.HIGH)
+        # Initialize Enable pins
+        self.enable_pins = {
+            'm0': DigitalOutputDevice(s1.m0_enable, initial_value=False),
+            'm1': DigitalOutputDevice(s1.m1_enable, initial_value=False),
+            'm2': DigitalOutputDevice(s1.m2_enable, initial_value=False),
+            'm3': DigitalOutputDevice(s1.m3_enable, initial_value=False),
+            'm4': DigitalOutputDevice(s1.m4_enable, initial_value=False),
+            'm5': DigitalOutputDevice(s1.m5_enable, initial_value=False),
+        }
 
     def init_spi(self):
         # Initialize SPI Bus for motor drivers.
-
         Board.spi = spidev.SpiDev()
 
         # Open(Bus, Device)
@@ -65,5 +52,9 @@ class Board:
         Board.spi.mode = 3
 
     def deinitBoard(self):
-        # Closes the board and releases the peripherals.
-        gpio.cleanup()
+        # Close the board and release peripherals.
+        for pin in self.cs_pins.values():
+            pin.close()
+        for pin in self.enable_pins.values():
+            pin.close()
+        Board.spi.close()
