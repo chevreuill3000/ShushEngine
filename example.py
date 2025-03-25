@@ -1,31 +1,34 @@
-import shush
+from shush.motor import Motor
 import time
 
-m = shush.Motor(0)
-m.enable_motor()
+try:
+    # Initialise le moteur m0
+    m = Motor(0)
 
+    # Active le moteur
+    print("🟢 Activation du moteur")
+    m.enable_motor()
 
-# This function takes the target position as an input.
-# It prints the current position and the iteration.
-# The motor spins until it gets to the target position
-# before allowing the next command.
-def spin(target):
-    m.go_to(target)
+    # Envoie à une position arbitraire
+    print("➡️ Déplacement à +100000")
+    m.go_to(100000)
 
-    i = 0
+    # Attendre que le moteur atteigne la position
+    time.sleep(2)
 
-    while m.get_position() != target:
-        print(m.get_position())
-        print(i)
-        i += 1
+    # Lire la position
+    pos = m.get_position()
+    print(f"📍 Position actuelle : {pos}")
 
+    # Stoppe le moteur
+    print("🛑 Arrêt du moteur")
+    m.stop_motor()
 
-while(True):
-    # Spin 5 rotations from start
-    spin(256000)
+except KeyboardInterrupt:
+    print("\n⚠️ Interruption clavier. Arrêt du moteur...")
 
-    time.sleep(0.5)
-    # Spin back 5 rotations to starting point
-    spin(0)
-
-    time.sleep(0.5)
+finally:
+    # Libération des GPIO
+    print("♻️ Libération des ressources")
+    m.deinitBoard()
+    print("✅ Terminé")
