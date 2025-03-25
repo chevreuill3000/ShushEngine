@@ -19,8 +19,9 @@ class Motor(Board):
             raise ValueError(f"Motor {motor} is not supported by this board configuration.")
 
         # Set up CS and Enable pins as DigitalOutputDevice
-        self.chip_select = DigitalOutputDevice(getattr(s1, cs_attr), initial_value=True)
-        self.enable = DigitalOutputDevice(getattr(s1, en_attr), initial_value=True)
+        self.chip_select = self.cs_pins[f"m{motor}"]
+        self.enable = self.enable_pins[f"m{motor}"]
+
 
         self.motor = motor
         self.default_settings()
