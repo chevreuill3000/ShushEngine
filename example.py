@@ -1,6 +1,8 @@
 from shush.motor import Motor
 import time
 
+m = None  # Important : pour que le bloc finally sache si m est défini
+
 try:
     # Initialise le moteur m0
     m = Motor(0)
@@ -27,8 +29,13 @@ try:
 except KeyboardInterrupt:
     print("\n⚠️ Interruption clavier. Arrêt du moteur...")
 
+except Exception as e:
+    print(f"❌ Erreur : {e}")
+
 finally:
-    # Libération des GPIO
-    print("♻️ Libération des ressources")
-    m.deinitBoard()
-    print("✅ Terminé")
+    if m:
+        print("♻️ Libération des ressources")
+        m.deinitBoard()
+        print("✅ Terminé")
+    else:
+        print("⚠️ Aucune ressource à libérer (le moteur n'a pas été initialisé)")
