@@ -23,7 +23,7 @@ cd Desktop
 To get the ShushEngine project files onto your desktop, copy/paste or type the following.
 
 ```
-git clone https://github.com/ZJAllen/ShushEngine.git
+git clone https://github.com/chevreuill3000/ShushEngine.git
 ```
 
 Now, change directory into the newly created `ShushEngine` folder.
