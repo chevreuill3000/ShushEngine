@@ -1,5 +1,3 @@
-__author__ = 'ZJAllen'
-
 import shush.boards.planktoscope_hat_v1 as s1
 import spidev
 from gpiozero import DigitalOutputDevice
@@ -16,21 +14,13 @@ class Board:
         # Initialize CS pins
         self.cs_pins = {
             'm0': DigitalOutputDevice(s1.m0_cs, initial_value=True),
-            'm1': DigitalOutputDevice(s1.m1_cs, initial_value=True),
-            'm2': DigitalOutputDevice(s1.m2_cs, initial_value=True),
-            'm3': DigitalOutputDevice(s1.m3_cs, initial_value=True),
-            'm4': DigitalOutputDevice(s1.m4_cs, initial_value=True),
-            'm5': DigitalOutputDevice(s1.m5_cs, initial_value=True),
+            'm1': DigitalOutputDevice(s1.m1_cs, initial_value=True)
         }
 
         # Initialize Enable pins
         self.enable_pins = {
             'm0': DigitalOutputDevice(s1.m0_enable, initial_value=False),
-            'm1': DigitalOutputDevice(s1.m1_enable, initial_value=False),
-            'm2': DigitalOutputDevice(s1.m2_enable, initial_value=False),
-            'm3': DigitalOutputDevice(s1.m3_enable, initial_value=False),
-            'm4': DigitalOutputDevice(s1.m4_enable, initial_value=False),
-            'm5': DigitalOutputDevice(s1.m5_enable, initial_value=False),
+            'm1': DigitalOutputDevice(s1.m1_enable, initial_value=False)
         }
 
     def init_spi(self):
