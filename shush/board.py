@@ -1,6 +1,6 @@
 __author__ = 'ZJAllen'
 
-import shush.boards.shush_mk1 as s1
+import shush.boards.planktoscope_hat_v1 as s1
 import spidev
 from gpiozero import DigitalOutputDevice
 
